@@ -3,6 +3,7 @@ import os
 import random
 from board import New_Board
 from window import draw_board, draw_piece, draw_giant_piece
+from Check_game import set_location,check_game,get_possible_move,Validate_box,Check_Giant_Board
 
 pygame.font.init()
 
@@ -39,7 +40,10 @@ def main():
     main_board = Board.create_board()
     small_board = Board.giant_board()
 
-
+    box = None
+    Player_1 = 1
+    Player_2 = -1
+    turn = random.choices([1,-1])
 
     while run:
         #les FPS
@@ -59,6 +63,22 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN and not game_over:
                 if pygame.mouse.get_pressed()[0]:
                     position = pygame.mouse.get_pos()
+
+                    if set_location(small_board,main_board,position[0]//(Square),position[1]//(Square),turn, box):
+
+                        check_game(small_board,main_board,turn)
+                        new_box = get_possible_move(small_board,position[0]//(Square),position[1]//(Square))
+
+                        box = Validate_box(small_board, main_board, new_box, position[0]//(Square),position[1]//(Square))
+
+                        if Check_Giant_Board(main_board,turn):
+                            game_over = True
+
+                        if turn == Player_1:
+                            turn = Player_2
+                        else:
+                            turn = Player_1
+
 
 
 main()
